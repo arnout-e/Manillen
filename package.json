@@ -1,0 +1,11 @@
+{
+  "name": "manillen-leren",
+  "version": "0.1.0",
+  "description": "Manillen spelen met een adviseur die uitlegt welke kaart je best legt en waarom.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "start": "node serve.js"
+  },
+  "license": "MIT"
+}

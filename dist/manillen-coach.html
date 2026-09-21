@@ -1,0 +1,1437 @@
+<title>Manillen Coach</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+:root {
+  --bg: #f1ece2;
+  --surface: #fbf9f4;
+  --surface-2: #e9e3d6;
+  --ink: #26221b;
+  --muted: #6d675b;
+  --line: #d6cfbf;
+  --felt: #275a41;
+  --felt-2: #1e4a35;
+  --felt-line: #3f7f5f;
+  --felt-ink: #e6f1e9;
+  --felt-muted: #9fc4ae;
+  --card-face: #fcfaf3;
+  --card-ink: #1f1b15;
+  --card-red: #b3291f;
+  --card-back: #8a3a33;
+  --card-back-2: #5f2621;
+  --accent: #d89a2c;
+  --accent-ink: #3a2705;
+  --accent-soft: #f6e6c2;
+  --good: #2e7a4d;
+  --good-soft: #d9eddf;
+  --bad: #b2382d;
+  --bad-soft: #f3d9d5;
+  --focus: #2d6bb0;
+  --shadow: 0 1px 2px rgba(20, 15, 5, .12), 0 6px 18px rgba(20, 15, 5, .08);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17191c; --surface: #202327; --surface-2: #2a2e33; --ink: #e8e3d8; --muted: #a49d90; --line: #3b4046;
+    --felt: #214a37; --felt-2: #193a2b; --felt-line: #376b51; --felt-ink: #e3eee6; --felt-muted: #8fb69f;
+    --card-face: #f6f1e6; --card-ink: #1f1b15; --card-red: #b3291f; --card-back: #7a3630; --card-back-2: #4d1f1b;
+    --accent: #e3aa3f; --accent-ink: #2b1c03; --accent-soft: #4a3a17;
+    --good: #5fb57f; --good-soft: #1f3b2a; --bad: #e0766b; --bad-soft: #3f2320; --focus: #7fb0ea;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 20px rgba(0, 0, 0, .35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #17191c; --surface: #202327; --surface-2: #2a2e33; --ink: #e8e3d8; --muted: #a49d90; --line: #3b4046;
+  --felt: #214a37; --felt-2: #193a2b; --felt-line: #376b51; --felt-ink: #e3eee6; --felt-muted: #8fb69f;
+  --card-face: #f6f1e6; --card-ink: #1f1b15; --card-red: #b3291f; --card-back: #7a3630; --card-back-2: #4d1f1b;
+  --accent: #e3aa3f; --accent-ink: #2b1c03; --accent-soft: #4a3a17;
+  --good: #5fb57f; --good-soft: #1f3b2a; --bad: #e0766b; --bad-soft: #3f2320; --focus: #7fb0ea;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 20px rgba(0, 0, 0, .35);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.45;
+}
+button { font: inherit; color: inherit; }
+button:focus-visible, .card:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+h1, h2, h3 { font-family: "Fraunces", Georgia, serif; font-weight: 700; margin: 0; text-wrap: balance; }
+.page { max-width: 1240px; margin: 0 auto; padding-block: 16px 40px; padding-inline: 16px; }
+
+/* Kop en score */
+.top { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: flex-end; justify-content: space-between; margin-bottom: 14px; }
+.brand h1 { font-size: 1.9rem; line-height: 1.05; }
+.tagline { margin: 4px 0 0; color: var(--muted); }
+.scoreboard { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.score { display: flex; align-items: baseline; gap: 8px; padding: 6px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; font-variant-numeric: tabular-nums; }
+.score .who { font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.score .n { font-family: "Fraunces", Georgia, serif; font-size: 1.5rem; line-height: 1; }
+.chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 999px; background: var(--surface-2); font-size: .85rem; white-space: nowrap; }
+.chip.red { color: var(--card-red); }
+.chip.accent { background: var(--accent-soft); color: var(--ink); }
+
+/* Indeling */
+.layout { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(300px, .9fr); gap: 18px; align-items: start; }
+@media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
+
+/* Tafel */
+.table {
+  position: relative;
+  background: radial-gradient(ellipse at 50% 40%, var(--felt) 0%, var(--felt-2) 100%);
+  border: 6px solid var(--card-back-2);
+  border-radius: 28px;
+  color: var(--felt-ink);
+  box-shadow: var(--shadow), inset 0 0 0 2px var(--felt-line);
+  display: grid;
+  grid-template-columns: 1fr minmax(0, 2fr) 1fr;
+  grid-template-rows: auto minmax(200px, 1fr) auto;
+  grid-template-areas: "nw north ne" "west center east" "sw south se";
+  gap: 6px;
+  padding: 12px;
+  min-height: 420px;
+}
+.seat { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px; border-radius: 10px; text-align: center; min-width: 0; }
+.seat.north { grid-area: north; }
+.seat.west { grid-area: west; justify-content: center; }
+.seat.east { grid-area: east; justify-content: center; }
+.seat.south { grid-area: south; }
+.seat .name { font-family: "Fraunces", Georgia, serif; font-size: 1.05rem; font-weight: 500; }
+.seat .tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }
+.seat .tag { font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; padding: 1px 7px; border-radius: 999px; background: rgba(255,255,255,.14); }
+.seat .tag.turn { background: var(--accent); color: var(--accent-ink); }
+.seat .backs { display: flex; gap: 2px; height: 26px; }
+.seat .back { width: 18px; height: 26px; border-radius: 3px; background: repeating-linear-gradient(45deg, var(--card-back) 0 3px, var(--card-back-2) 3px 6px); border: 1px solid rgba(255,255,255,.35); }
+.seat .know { font-size: .78rem; color: var(--felt-muted); }
+.seat.active { box-shadow: inset 0 0 0 2px var(--accent); }
+
+.center { grid-area: center; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; min-height: 240px; }
+.trick { position: relative; width: 190px; height: 190px; }
+.trick .slot { position: absolute; width: 60px; height: 84px; }
+.trick .slot.p0 { left: 65px; bottom: 0; }
+.trick .slot.p1 { left: 0; top: 53px; }
+.trick .slot.p2 { left: 65px; top: 0; }
+.trick .slot.p3 { right: 0; top: 53px; }
+.trick .slot.winner .card { box-shadow: 0 0 0 3px var(--accent), var(--shadow); }
+.trick .who { position: absolute; left: 50%; transform: translateX(-50%); font-size: .68rem; text-transform: uppercase; letter-spacing: .05em; color: var(--felt-muted); }
+.trick .slot.p0 .who, .trick .slot.p1 .who, .trick .slot.p3 .who { bottom: -16px; }
+.trick .slot.p2 .who { top: -16px; }
+.trick-result { text-align: center; font-size: .95rem; color: var(--felt-ink); background: rgba(0,0,0,.22); padding: 4px 12px; border-radius: 999px; }
+.center .notice { text-align: center; color: var(--felt-muted); max-width: 26ch; }
+.center .notice strong { color: var(--felt-ink); }
+
+/* Troef kiezen op tafel */
+.trump-pick { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+.trump-pick .title { font-family: "Fraunces", Georgia, serif; font-size: 1.15rem; }
+.trump-pick .options { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.trump-btn { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 76px; padding: 8px 10px; border-radius: 10px; border: 2px solid rgba(255,255,255,.25); background: rgba(255,255,255,.08); color: var(--felt-ink); cursor: pointer; }
+.trump-btn:hover { background: rgba(255,255,255,.16); }
+.trump-btn.best { border-color: var(--accent); background: rgba(216,154,44,.18); }
+.trump-btn .sym { font-size: 1.5rem; line-height: 1; }
+.trump-btn .sym.red { color: #ff8a7d; }
+.trump-btn .exp { font-size: .75rem; color: var(--felt-muted); font-variant-numeric: tabular-nums; }
+
+/* Resultaat */
+.result { background: var(--surface); color: var(--ink); border-radius: 14px; padding: 16px 20px; text-align: center; box-shadow: var(--shadow); max-width: 320px; }
+.result h2 { font-size: 1.3rem; margin-bottom: 4px; }
+.result .pts { font-variant-numeric: tabular-nums; color: var(--muted); }
+.result .btn { margin-top: 10px; }
+
+/* Kaarten */
+.card {
+  display: inline-flex; flex-direction: column; justify-content: space-between;
+  width: 60px; height: 84px; padding: 5px 6px; border-radius: 7px;
+  background: var(--card-face); color: var(--card-ink);
+  border: 1px solid rgba(0,0,0,.18); box-shadow: var(--shadow);
+  font-family: "Fraunces", Georgia, serif; font-weight: 700; font-size: 1.15rem; line-height: 1;
+  position: relative; user-select: none;
+}
+.card.red { color: var(--card-red); }
+.card .r { text-align: left; }
+.card .s { text-align: right; font-size: 1.5rem; }
+.card .r small { display: block; font-family: "Source Sans 3", sans-serif; font-weight: 600; font-size: .6rem; letter-spacing: .04em; color: var(--muted); margin-top: 2px; }
+
+/* Hand */
+.hand-wrap { margin-top: 14px; }
+.hand-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+.label { font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.hint { font-size: .9rem; color: var(--muted); }
+.hand { display: flex; flex-wrap: wrap; gap: 8px; min-height: 100px; align-items: flex-end; }
+.hand .card { cursor: pointer; transition: transform .12s ease, box-shadow .12s ease; border: 0; }
+.hand .card.legal:hover { transform: translateY(-6px); }
+.hand .card.illegal { opacity: .38; cursor: not-allowed; filter: saturate(.4); }
+.hand .card.advised { box-shadow: 0 0 0 3px var(--accent), var(--shadow); transform: translateY(-8px); }
+.hand .card.advised::after { content: "advies"; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--accent); color: var(--accent-ink); font-family: "Source Sans 3", sans-serif; font-size: .62rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: 1px 6px; border-radius: 999px; }
+.hand .card.waiting { cursor: default; }
+@media (prefers-reduced-motion: reduce) { .hand .card { transition: none; } }
+
+/* Paneel */
+.panel { display: flex; flex-direction: column; gap: 12px; position: sticky; top: env(safe-area-inset-top, 0px); }
+@media (max-width: 860px) { .panel { position: static; } }
+.block { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.block h2 { font-size: 1.05rem; margin-bottom: 6px; }
+.block h3 { font-size: .95rem; margin: 10px 0 4px; }
+.block p { margin: 4px 0; }
+.rule { font-size: .92rem; color: var(--muted); padding: 6px 10px; border-left: 3px solid var(--line); margin: 6px 0; }
+.advice { display: flex; gap: 12px; align-items: flex-start; }
+.advice .card { flex: none; }
+.advice .why { flex: 1; min-width: 0; }
+.reasons { margin: 4px 0 0; padding-left: 18px; }
+.reasons li { margin: 2px 0; }
+.note { background: var(--accent-soft); border-radius: 8px; padding: 6px 10px; font-size: .92rem; margin-top: 8px; }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface-2); cursor: pointer; font-weight: 600; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+.btn:hover { filter: brightness(.97); }
+.btn:disabled { opacity: .5; cursor: default; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+
+.options { width: 100%; border-collapse: collapse; font-size: .9rem; margin-top: 6px; }
+.options td { padding: 5px 6px; border-top: 1px solid var(--line); vertical-align: top; }
+.options tr.best td { background: var(--accent-soft); }
+.options .mini { white-space: nowrap; font-weight: 700; font-family: "Fraunces", Georgia, serif; }
+.options .mini.red { color: var(--card-red); }
+.options .exp { white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--muted); }
+
+.feedback.good { border-color: var(--good); background: var(--good-soft); }
+.feedback.bad { border-color: var(--bad); background: var(--bad-soft); }
+.feedback h2 { display: flex; align-items: center; gap: 8px; }
+
+/* Instellingen */
+.settings { display: grid; gap: 8px; }
+.settings .row { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; }
+.settings label { display: inline-flex; align-items: center; gap: 4px; font-size: .92rem; }
+.settings select { font: inherit; padding: 3px 6px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.stats { font-size: .9rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* Kaartenteller */
+.tracker { display: grid; gap: 6px; }
+.tracker .suit-row { display: grid; grid-template-columns: 22px 1fr; align-items: center; gap: 8px; }
+.tracker .sym { font-size: 1.2rem; text-align: center; }
+.tracker .sym.red { color: var(--card-red); }
+.tracker .cells { display: flex; flex-wrap: wrap; gap: 4px; }
+.cell { width: 30px; height: 26px; display: grid; place-items: center; border-radius: 5px; font-size: .82rem; font-weight: 700; font-variant-numeric: tabular-nums; border: 1px solid var(--line); background: var(--surface); position: relative; }
+.cell.played { opacity: .3; text-decoration: line-through; }
+.cell.mine { background: var(--accent-soft); border-color: var(--accent); }
+.cell.master::after { content: "M"; position: absolute; top: -7px; right: -5px; background: var(--good); color: #fff; font-size: .55rem; padding: 0 4px; border-radius: 999px; }
+.tracker .legend { font-size: .8rem; color: var(--muted); }
+.knowledge { margin: 8px 0 0; padding-left: 18px; font-size: .9rem; }
+
+.log { list-style: none; margin: 0; padding: 0; font-size: .88rem; font-variant-numeric: tabular-nums; }
+.log li { padding: 3px 0; border-top: 1px solid var(--line); display: flex; gap: 8px; flex-wrap: wrap; }
+.log li:first-child { border-top: 0; }
+.log .n { color: var(--muted); width: 3.2em; }
+.log .mini.red { color: var(--card-red); }
+.log .win { margin-left: auto; font-weight: 600; }
+
+/* Leerstof */
+.learn { margin-top: 24px; display: grid; gap: 10px; }
+details { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 16px; }
+summary { cursor: pointer; font-family: "Fraunces", Georgia, serif; font-weight: 700; font-size: 1.05rem; }
+.prose { max-width: 70ch; }
+.prose ul { padding-left: 20px; }
+.prose li { margin: 4px 0; }
+
+.mini { font-weight: 700; }
+.mini.red { color: var(--card-red); }
+.toast { position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 8px 14px; border-radius: 8px; font-size: .92rem; box-shadow: var(--shadow); max-width: 90vw; z-index: 10; }
+
+</style>
+<div class="page">
+  <header class="top">
+    <div class="brand">
+      <h1>Manillen Coach</h1>
+      <p class="tagline">Speel, en zie bij elke kaart waarom ze de beste is.</p>
+    </div>
+    <div class="scoreboard" id="scoreboard"></div>
+  </header>
+
+  <main class="layout">
+    <section class="play">
+      <div class="table" id="table"></div>
+      <div class="hand-wrap">
+        <div class="hand-head">
+          <span class="label">Jouw hand</span>
+          <span class="hint" id="hand-hint"></span>
+        </div>
+        <div class="hand" id="hand"></div>
+      </div>
+    </section>
+
+    <aside class="panel" id="panel"></aside>
+  </main>
+
+  <section class="learn">
+    <details>
+      <summary>Spelregels in het kort</summary>
+      <div class="prose">
+        <p>Manillen speel je met 32 kaarten (7 tot aas) in twee ploegen van twee. Je maat zit tegenover je: hier is dat Noord. Elke speler krijgt 8 kaarten. De deler kiest troef nadat hij zijn kaarten bekeek, of speelt zonder troef (sans). Dan telt de score dubbel.</p>
+        <p>De rangorde is anders dan bij de meeste spellen: de <strong>10 (manille)</strong> is de hoogste kaart, dan aas, heer, vrouw, boer, 9, 8, 7. Punten: manille 5, aas 4, heer 3, vrouw 2, boer 1. In totaal zitten er 60 punten in het spel. De ploeg met meer dan 30 wint de deal en schrijft het verschil met 30 op. Wie eerst 101 haalt, wint.</p>
+        <p>De regels aan tafel zijn streng:</p>
+        <ul>
+          <li>Je moet altijd de gevraagde kleur volgen.</li>
+          <li>Kan je volgen, dan moet je hoger leggen dan de kaart die voorligt, als je dat kan. Ligt je maat voor, dan hoeft dat niet.</li>
+          <li>Kan je niet volgen en ligt de tegenpartij voor, dan moet je troeven. Is er al getroefd, dan moet je overtroeven als je kan. Kan je niet overtroeven, dan mag je alles bijleggen.</li>
+          <li>Ligt je maat voor, dan mag je bijleggen wat je wil. Punten bijleggen in de slag van je maat heet <em>smeren</em>.</li>
+        </ul>
+        <p>Er bestaan lokale varianten (wie troef kiest, laatste kaart op tafel, mannen en dubbelen). Dit programma speelt de versie hierboven.</p>
+      </div>
+    </details>
+    <details>
+      <summary>Vuistregels die de coach gebruikt</summary>
+      <div class="prose">
+        <ul>
+          <li><strong>Meester</strong>: de hoogste kaart van een kleur die nog in het spel is. Daarmee win je zeker, tenzij iemand troeft. Bewaar meesters voor slagen waar ze punten opleveren.</li>
+          <li><strong>Troef trekken</strong>: heb je meer troeven dan de anderen samen, kom dan troef uit. Zo raken de tegenstanders hun troeven kwijt en winnen je meesters later zonder gevaar.</li>
+          <li><strong>Smeren</strong>: wint je maat de slag zeker, leg er dan je aas of heer bij. Punten in een gewonnen slag zijn punten voor jullie.</li>
+          <li><strong>Niet weggeven</strong>: kan je een slag niet winnen, leg dan je laagste kaart zonder punten.</li>
+          <li><strong>Goedkoop winnen</strong>: winnen twee kaarten de slag zeker, neem dan de laagste en hou de hoogste voor later.</li>
+          <li><strong>Kleur kort maken</strong>: speel een kleur waarvan je er weinig hebt uit, zodat je die later kan troeven.</li>
+          <li><strong>Tellen</strong>: hou bij welke hoge kaarten en hoeveel troeven er nog buiten zijn. Het paneel rechts doet dat voor je, tot je het zelf kan.</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+</div>
+<script type="module">
+// Spelmotor voor Manillen: kaarten, regels, slagen en telling.
+// Geen UI-code hier: dit bestand draait ook in Node voor de tests.
+
+const SUITS = ['h', 's', 'd', 'c'];
+const SUIT_NAME = { h: 'harten', s: 'schoppen', d: 'ruiten', c: 'klaveren' };
+const SUIT_SYMBOL = { h: '♥', s: '♠', d: '♦', c: '♣' };
+const RANKS = ['7', '8', '9', 'J', 'Q', 'K', 'A', 'T']; // van laag naar hoog
+const RANK_LABEL = { 7: '7', 8: '8', 9: '9', J: 'B', Q: 'V', K: 'H', A: 'A', T: '10' };
+const RANK_NAME = { 7: 'zeven', 8: 'acht', 9: 'negen', J: 'boer', Q: 'vrouw', K: 'heer', A: 'aas', T: 'manille' };
+const RANK_ORDER = Object.fromEntries(RANKS.map((r, i) => [r, i]));
+const RANK_VALUE = { 7: 0, 8: 0, 9: 0, J: 1, Q: 2, K: 3, A: 4, T: 5 };
+const DECK = SUITS.flatMap((s) => RANKS.map((r) => r + s));
+const TOTAL_POINTS = 60;
+const PLAYER_NAME = ['Zuid', 'West', 'Noord', 'Oost'];
+const PLAYER_LABEL = ['Zuid (jij)', 'West', 'Noord (je maat)', 'Oost'];
+
+const rankOf = (c) => c[0];
+const suitOf = (c) => c[1];
+const valueOf = (c) => RANK_VALUE[c[0]];
+const orderOf = (c) => RANK_ORDER[c[0]];
+const cardName = (c) => `${RANK_LABEL[c[0]]}${SUIT_SYMBOL[c[1]]}`;
+const cardLongName = (c) => `${SUIT_NAME[c[1]]} ${RANK_NAME[c[0]]}`;
+const partnerOf = (p) => (p + 2) % 4;
+const teamOf = (p) => p % 2;
+const nextPlayer = (p) => (p + 1) % 4;
+const sameTeam = (a, b) => teamOf(a) === teamOf(b);
+const trumpSuitOf = (deal) => (deal.trump === 'sans' || deal.trump == null ? null : deal.trump);
+
+const SUIT_SORT = { h: 0, c: 1, d: 2, s: 3 };
+function sortHand(hand) {
+  return [...hand].sort((a, b) => {
+    if (suitOf(a) !== suitOf(b)) return SUIT_SORT[suitOf(a)] - SUIT_SORT[suitOf(b)];
+    return orderOf(b) - orderOf(a);
+  });
+}
+
+// Deterministische toevalsgenerator (mulberry32) zodat een deal herhaalbaar is.
+function makeRng(seed) {
+  let a = seed >>> 0;
+  return function rng() {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function shuffle(arr, rng) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ---------- Spel en deal ----------
+
+function createGame({ seed = Date.now() % 2147483647, firstDealer = 0, target = 101 } = {}) {
+  return {
+    seed,
+    rng: makeRng(seed),
+    scores: [0, 0], // team 0 = Zuid + Noord, team 1 = West + Oost
+    target,
+    dealer: firstDealer,
+    dealNo: 0,
+    deal: null,
+    history: [],
+  };
+}
+
+function startDeal(game) {
+  const cards = shuffle(DECK, game.rng);
+  const hands = [0, 1, 2, 3].map((p) => sortHand(cards.slice(p * 8, p * 8 + 8)));
+  const dealer = game.dealer;
+  game.dealNo += 1;
+  game.deal = {
+    no: game.dealNo,
+    dealer,
+    chooser: dealer,
+    phase: 'trump', // 'trump' → 'play' → 'done'
+    trump: null, // kleur, 'sans' of null zolang niet gekozen
+    hands,
+    turn: dealer,
+    leader: null,
+    trick: [], // [{ player, card }]
+    tricks: [], // [{ cards, winner, points, leader }]
+    played: [],
+    // Openbare informatie die iedereen aan tafel kan afleiden:
+    voids: [0, 1, 2, 3].map(() => ({ h: false, s: false, d: false, c: false })),
+    maxRank: [0, 1, 2, 3].map(() => ({ h: null, s: null, d: null, c: null })), // geen kaart hoger dan deze rangorde
+    points: [0, 0],
+    result: null,
+  };
+  return game.deal;
+}
+
+function setTrump(deal, trump) {
+  if (deal.phase !== 'trump') throw new Error('Troef is al gekozen.');
+  if (trump !== 'sans' && !SUITS.includes(trump)) throw new Error('Ongeldige troef: ' + trump);
+  deal.trump = trump;
+  deal.phase = 'play';
+  deal.leader = nextPlayer(deal.dealer);
+  deal.turn = deal.leader;
+}
+
+// ---------- Slagregels ----------
+
+// Slaat kaart `cand` de kaart `winning` die nu de slag heeft?
+function beats(cand, winning, led, trump) {
+  const cs = suitOf(cand);
+  const ws = suitOf(winning);
+  if (trump && cs === trump && ws !== trump) return true;
+  if (cs === ws) return orderOf(cand) > orderOf(winning);
+  return false;
+}
+
+function currentWinnerIndex(trick, trump) {
+  if (!trick.length) return -1;
+  const led = suitOf(trick[0].card);
+  let w = 0;
+  for (let i = 1; i < trick.length; i++) {
+    if (beats(trick[i].card, trick[w].card, led, trump)) w = i;
+  }
+  return w;
+}
+
+function trickPoints(trick) {
+  return trick.reduce((s, t) => s + valueOf(t.card), 0);
+}
+
+// Beschrijft de situatie in de lopende slag vanuit een speler.
+function trickInfo(deal, player) {
+  const trump = trumpSuitOf(deal);
+  const trick = deal.trick;
+  if (!trick.length) return { empty: true, trump, led: null, winning: null, partnerWinning: false, later: [] };
+  const led = suitOf(trick[0].card);
+  const wIdx = currentWinnerIndex(trick, trump);
+  const winning = trick[wIdx];
+  const later = [];
+  let p = nextPlayer(player);
+  for (let i = trick.length + 1; i < 4; i++) {
+    later.push(p);
+    p = nextPlayer(p);
+  }
+  return { empty: false, trump, led, winning, partnerWinning: winning.player === partnerOf(player), later, points: trickPoints(trick) };
+}
+
+// Welke kaarten mag een speler leggen? Samen met de regel die dat bepaalt.
+function legalMovesExplained(deal, player) {
+  const hand = deal.hands[player];
+  const info = trickInfo(deal, player);
+  if (info.empty) return { cards: [...hand], rule: 'Je komt uit: je mag elke kaart spelen.' };
+  const { trump, led, winning, partnerWinning } = info;
+  const inSuit = hand.filter((c) => suitOf(c) === led);
+  const ledName = SUIT_NAME[led];
+  if (inSuit.length) {
+    if (partnerWinning) return { cards: inSuit, rule: `Je moet ${ledName} volgen. Je maat ligt voor, dus je hoeft niet hoger te leggen.` };
+    const higher = inSuit.filter((c) => beats(c, winning.card, led, trump));
+    if (higher.length) return { cards: higher, rule: `Je moet ${ledName} volgen én hoger leggen dan ${cardName(winning.card)}, want je kan dat.` };
+    if (suitOf(winning.card) === trump && led !== trump) return { cards: inSuit, rule: `Je moet ${ledName} volgen. Er ligt al troef, dus hoger leggen kan niet.` };
+    return { cards: inSuit, rule: `Je moet ${ledName} volgen. Je hebt niets hoger dan ${cardName(winning.card)}, dus je mag elke ${ledName} leggen.` };
+  }
+  if (partnerWinning) return { cards: [...hand], rule: `Je hebt geen ${ledName}. Je maat ligt voor, dus je mag alles bijleggen.` };
+  if (!trump) return { cards: [...hand], rule: `Je hebt geen ${ledName}. Zonder troef mag je alles bijleggen.` };
+  const trumps = hand.filter((c) => suitOf(c) === trump);
+  if (!trumps.length) return { cards: [...hand], rule: `Je hebt geen ${ledName} en geen troef: je mag alles bijleggen.` };
+  if (suitOf(winning.card) === trump) {
+    const higher = trumps.filter((c) => orderOf(c) > orderOf(winning.card));
+    if (higher.length) return { cards: higher, rule: `Je hebt geen ${ledName}. Er ligt al troef (${cardName(winning.card)}) van de tegenpartij en je kan overtroeven, dus dat moet.` };
+    return { cards: [...hand], rule: `Je hebt geen ${ledName}. De tegenpartij troefde met ${cardName(winning.card)} en je kan niet overtroeven: je mag alles bijleggen.` };
+  }
+  return { cards: trumps, rule: `Je hebt geen ${ledName} en de tegenpartij ligt voor: je moet troeven.` };
+}
+
+function legalMoves(deal, player) {
+  return legalMovesExplained(deal, player).cards;
+}
+
+function isLegal(deal, player, card) {
+  return deal.phase === 'play' && deal.turn === player && legalMoves(deal, player).includes(card);
+}
+
+// Speelt een kaart. Werkt de openbare informatie bij en sluit de slag af als ze vol is.
+function playCard(deal, player, card) {
+  if (!isLegal(deal, player, card)) throw new Error(`Ongeldige zet: ${card} door speler ${player}`);
+  const info = trickInfo(deal, player);
+  const trump = info.trump;
+  if (!info.empty) {
+    const { led, winning, partnerWinning } = info;
+    const s = suitOf(card);
+    if (s !== led) {
+      deal.voids[player][led] = true;
+      if (trump && !partnerWinning && s !== trump) {
+        if (suitOf(winning.card) === trump) {
+          const cur = deal.maxRank[player][trump];
+          deal.maxRank[player][trump] = cur == null ? orderOf(winning.card) : Math.min(cur, orderOf(winning.card));
+        } else {
+          deal.voids[player][trump] = true;
+        }
+      }
+    } else if (!partnerWinning && !beats(card, winning.card, led, trump) && suitOf(winning.card) === led) {
+      // Kon niet hoger dan de winnende kaart in de gevraagde kleur.
+      const cur = deal.maxRank[player][led];
+      deal.maxRank[player][led] = cur == null ? orderOf(winning.card) : Math.min(cur, orderOf(winning.card));
+    }
+  }
+  deal.hands[player] = deal.hands[player].filter((c) => c !== card);
+  deal.played.push(card);
+  deal.trick.push({ player, card });
+  deal.turn = nextPlayer(player);
+  if (deal.trick.length < 4) return { trickComplete: false };
+  const wIdx = currentWinnerIndex(deal.trick, trump);
+  const winner = deal.trick[wIdx].player;
+  const points = trickPoints(deal.trick);
+  deal.points[teamOf(winner)] += points;
+  deal.tricks.push({ cards: deal.trick, winner, points, leader: deal.trick[0].player });
+  deal.trick = [];
+  deal.leader = winner;
+  deal.turn = winner;
+  if (deal.tricks.length === 8) {
+    deal.phase = 'done';
+    deal.result = dealResult(deal);
+  }
+  return { trickComplete: true, winner, points, dealDone: deal.phase === 'done' };
+}
+
+// De ploeg met meer dan 30 punten wint en schrijft het verschil met 30 op.
+// Zonder troef (sans) telt dubbel.
+function dealResult(deal) {
+  const [a, b] = deal.points;
+  const multiplier = deal.trump === 'sans' ? 2 : 1;
+  if (a === b) return { winnerTeam: null, score: 0, multiplier, points: [a, b] };
+  const winnerTeam = a > b ? 0 : 1;
+  const score = (Math.max(a, b) - 30) * multiplier;
+  return { winnerTeam, score, multiplier, points: [a, b] };
+}
+
+function finishDeal(game) {
+  const deal = game.deal;
+  if (deal.phase !== 'done') throw new Error('De deal is nog niet klaar.');
+  const r = deal.result;
+  if (r.winnerTeam != null) game.scores[r.winnerTeam] += r.score;
+  game.history.push({ no: deal.no, dealer: deal.dealer, trump: deal.trump, ...r });
+  game.dealer = nextPlayer(deal.dealer);
+  return r;
+}
+
+function gameOver(game) {
+  return game.scores.some((s) => s >= game.target);
+}
+
+// Ondiepe maar voldoende kopie van een deal, voor simulaties.
+function cloneDeal(deal) {
+  return {
+    ...deal,
+    hands: deal.hands.map((h) => [...h]),
+    trick: deal.trick.map((t) => ({ ...t })),
+    tricks: [...deal.tricks],
+    played: [...deal.played],
+    voids: deal.voids.map((v) => ({ ...v })),
+    maxRank: deal.maxRank.map((v) => ({ ...v })),
+    points: [...deal.points],
+  };
+}
+
+// Adviseur: beoordeelt elke toegelaten kaart, legt uit waarom, en verfijnt
+// de rangschikking met simulaties van de verborgen handen.
+// Dezelfde heuristiek stuurt de computerspelers: die zien enkel hun eigen kaarten
+// en wat er openbaar op tafel gebeurde. Ze spieken niet.
+
+
+const pct = (p) => `${Math.round(p * 100)}%`;
+const listNames = (cards) => cards.map(cardName).join(', ');
+
+// Kans dat een hand van h kaarten, getrokken uit U onbekende kaarten, géén van k specifieke kaarten bevat.
+function probNone(k, U, h) {
+  if (k <= 0) return 1;
+  if (h <= 0) return 1;
+  if (k > U - h) return 0;
+  let p = 1;
+  for (let i = 0; i < h; i++) p *= (U - k - i) / (U - i);
+  return p;
+}
+
+// Alles wat de speler weet, netjes bij elkaar.
+function buildContext(deal, player) {
+  const trump = trumpSuitOf(deal);
+  const hand = deal.hands[player];
+  const played = new Set(deal.played);
+  const unseen = DECK.filter((c) => !played.has(c) && !hand.includes(c));
+  const U = unseen.length;
+  const bySuit = (cards) => Object.fromEntries(SUITS.map((s) => [s, cards.filter((c) => suitOf(c) === s)]));
+  const unseenBySuit = bySuit(unseen);
+  const handBySuit = bySuit(hand);
+  const partner = partnerOf(player);
+  const others = [0, 1, 2, 3].filter((p) => p !== player);
+  const handSize = (p) => deal.hands[p].length;
+
+  // Kan speler p deze kaart in handen hebben, gelet op wat hij toonde?
+  const couldHold = (p, c) => {
+    const s = suitOf(c);
+    if (deal.voids[p][s]) return false;
+    const m = deal.maxRank[p][s];
+    if (m != null && orderOf(c) > m) return false;
+    return true;
+  };
+  // Kans dat speler p geen enkele kaart van kleur s heeft.
+  const pVoid = (p, s) => {
+    if (deal.voids[p][s]) return 1;
+    const k = unseenBySuit[s].filter((c) => couldHold(p, c)).length;
+    return probNone(k, U, handSize(p));
+  };
+  // Kans dat speler p minstens één van deze kaarten heeft.
+  const pHoldsAny = (p, cards) => {
+    const k = cards.filter((c) => couldHold(p, c)).length;
+    return 1 - probNone(k, U, handSize(p));
+  };
+  const isMaster = (c) => !unseenBySuit[suitOf(c)].some((u) => orderOf(u) > orderOf(c));
+  const higherOut = (c) => unseenBySuit[suitOf(c)].filter((u) => orderOf(u) > orderOf(c));
+  const trumpsUnseen = trump ? unseenBySuit[trump].length : 0;
+  const myTrumps = trump ? handBySuit[trump].length : 0;
+  const opps = others.filter((p) => !sameTeam(p, player));
+
+  // Kans dat minstens één van `players` de kaart `top` nog kan kloppen in een slag met gevraagde kleur `led`.
+  // Ze zijn verplicht te kloppen als ze kunnen, dus "kan" is hier ook "zal".
+  const pBeatenBy = (top, led, players) => {
+    if (!players.length) return 0;
+    let none = 1;
+    for (const p of players) {
+      const beaters = unseen.filter((u) => beats(u, top, led, trump) && couldHold(p, u));
+      const inLed = beaters.filter((u) => suitOf(u) === led);
+      const withTrump = trump && led !== trump ? beaters.filter((u) => suitOf(u) === trump) : [];
+      const pSuit = pHoldsAny(p, inLed);
+      const pTrump = withTrump.length ? pVoid(p, led) * pHoldsAny(p, withTrump) : 0;
+      const pThis = 1 - (1 - pSuit) * (1 - pTrump);
+      none *= 1 - pThis;
+    }
+    return 1 - none;
+  };
+  // Kans dat een tegenstander kan troeven als ik kleur s uitkom (niet-troef).
+  const oppTrumpRisk = (s) => {
+    if (!trump || s === trump || trumpsUnseen === 0) return 0;
+    let none = 1;
+    for (const p of opps) none *= 1 - pVoid(p, s) * (1 - probNone(unseenBySuit[trump].filter((c) => couldHold(p, c)).length, U, handSize(p)));
+    return 1 - none;
+  };
+  const partnerMayTrump = trump && !deal.voids[partner][trump] && trumpsUnseen > 0;
+
+  return {
+    trump, hand, unseen, U, unseenBySuit, handBySuit, partner, opps, handSize, couldHold, pVoid, pHoldsAny,
+    isMaster, higherOut, trumpsUnseen, myTrumps, pBeatenBy, oppTrumpRisk, partnerMayTrump,
+    partnerChoseTrump: deal.chooser === partner && trump != null,
+    oppChoseTrump: !sameTeam(deal.chooser, player) && trump != null,
+    sans: deal.trump === 'sans',
+  };
+}
+
+// Hoe kostbaar is het om deze kaart nu op te spelen?
+function resourceCost(ctx, c) {
+  const s = suitOf(c);
+  if (ctx.trump && s === ctx.trump) return ctx.isMaster(c) ? 3 : 1.2 + orderOf(c) * 0.15;
+  if (ctx.isMaster(c)) return 1.5;
+  return 0;
+}
+
+function voidBonus(ctx, c, reasons) {
+  const s = suitOf(c);
+  if (!ctx.trump || s === ctx.trump || ctx.myTrumps === 0 || valueOf(c) > 0) return 0;
+  if (ctx.handBySuit[s].length === 1) {
+    reasons.push(`Je laatste ${SUIT_NAME[s]}: daarna kan je die kleur troeven.`);
+    return 1.2;
+  }
+  return 0;
+}
+
+// ---------- Uitkomen ----------
+
+function evalLead(ctx, c) {
+  const s = suitOf(c);
+  const v = valueOf(c);
+  const reasons = [];
+  let score = 0;
+  const master = ctx.isMaster(c);
+  const suitLen = ctx.handBySuit[s].length;
+  const higher = ctx.higherOut(c);
+
+  if (ctx.trump && s === ctx.trump) {
+    if (ctx.trumpsUnseen === 0) {
+      score += 2 + v;
+      reasons.push('De anderen hebben geen troef meer: deze slag is voor jou.');
+    } else if (master) {
+      score += 7 + v * 0.5;
+      reasons.push(`Hoogste troef die nog in het spel is. Je wint zeker en je trekt troeven (de anderen hebben er samen nog ${ctx.trumpsUnseen}).`);
+    } else if (ctx.myTrumps >= ctx.trumpsUnseen) {
+      score += 3 - v * 0.8;
+      reasons.push(`Troef trekken: jij hebt ${ctx.myTrumps} troeven, de anderen samen nog ${ctx.trumpsUnseen}. Zo haal je hun troeven eruit.`);
+      if (v > 0) reasons.push(`Liever een lagere troef: ${listNames(higher)} zit nog buiten en pakt deze ${RANK_NAME[c[0]]}.`);
+    } else {
+      score -= 2 + v;
+      reasons.push(`Je hebt maar ${ctx.myTrumps} troeven tegenover ${ctx.trumpsUnseen} bij de anderen. Hou ze om later een slag te pakken.`);
+    }
+    if (ctx.partnerChoseTrump && !master) {
+      score += 1.5;
+      reasons.push('Je maat koos troef: troef spelen helpt hem zijn troeven uit te spelen.');
+    }
+    if (ctx.oppChoseTrump && !master) {
+      score -= 1.5;
+      reasons.push('De tegenpartij koos troef en zit wellicht sterker in troef.');
+    }
+    return { score, reasons };
+  }
+
+  if (master) {
+    score += 4 + v;
+    reasons.push(`Hoogste ${SUIT_NAME[s]} die nog in het spel is (meester).`);
+    const risk = ctx.oppTrumpRisk(s);
+    if (risk > 0.15) {
+      score -= risk * (v + 4);
+      reasons.push(`Kans ${pct(risk)} dat een tegenstander geen ${SUIT_NAME[s]} meer heeft en troeft.`);
+    } else if (ctx.trump) {
+      reasons.push('Weinig kans dat er getroefd wordt.');
+    }
+    if (higher.length === 0 && ctx.unseenBySuit[s].length === 0) {
+      score -= 2;
+      reasons.push(`Niemand heeft nog ${SUIT_NAME[s]}: wie geen troef heeft, gooit gewoon af.`);
+    }
+    return { score, reasons };
+  }
+
+  if (v > 0) {
+    score -= v + 1;
+    reasons.push(`${listNames(higher)} zit nog bij de anderen: je riskeert ${v} punt${v > 1 ? 'en' : ''} weg te geven.`);
+    if (ctx.partner != null && ctx.pHoldsAny(ctx.partner, higher) > 0.5) reasons.push('Al kan die hogere kaart ook bij je maat zitten.');
+    return { score, reasons };
+  }
+
+  score += 1;
+  reasons.push('Lage kaart: je geeft geen punten weg.');
+  const risk = ctx.oppTrumpRisk(s);
+  if (suitLen <= 2 && ctx.myTrumps > 0 && ctx.trump) {
+    score += 1.5;
+    reasons.push(`Kort in ${SUIT_NAME[s]}: na ${suitLen === 1 ? 'deze kaart' : 'twee keer'} ben je de kleur kwijt en kan je troeven.`);
+  }
+  if (ctx.trump && ctx.pVoid(ctx.partner, s) > 0.5 && ctx.partnerMayTrump) {
+    score += 2.5;
+    reasons.push(`Je maat heeft wellicht geen ${SUIT_NAME[s]} meer en kan troeven.`);
+  }
+  if (risk > 0.5 && ctx.myTrumps === 0) {
+    score -= 1.5;
+    reasons.push(`Een tegenstander heeft wellicht geen ${SUIT_NAME[s]} meer en troeft.`);
+  }
+  if (suitLen >= 4 && higher.length <= 2) {
+    score += 0.5;
+    reasons.push(`Lange kleur: na een paar rondes ${SUIT_NAME[s]} zijn de anderen die kwijt en word jij meester.`);
+  }
+  if (ctx.oppChoseTrump && ctx.higherOut(c).length && higher.some((h) => valueOf(h) >= 4)) {
+    reasons.push('Je verkent de kleur zonder risico.');
+  }
+  return { score, reasons };
+}
+
+// ---------- Bijleggen ----------
+
+function evalFollow(ctx, deal, player, c, legal) {
+  const info = trickInfo(deal, player);
+  const { trump, led, winning, partnerWinning, later, points: trickPts } = info;
+  const s = suitOf(c);
+  const v = valueOf(c);
+  const reasons = [];
+  let score = 0;
+  const laterOpps = later.filter((p) => !sameTeam(p, player));
+  const partnerLater = later.includes(ctx.partner);
+  const wins = beats(c, winning.card, led, trump);
+  const master = ctx.isMaster(c);
+  const isLast = later.length === 0;
+
+  if (partnerWinning && !wins) {
+    const pLose = ctx.pBeatenBy(winning.card, led, laterOpps);
+    if (pLose < 0.05) {
+      score += v * 1.5 + 1;
+      reasons.push(isLast ? 'Je maat wint de slag: leg punten bij (smeren).' : 'Je maat wint de slag en niemand kan er nog over: leg punten bij (smeren).');
+      if (v === 0) reasons.push('Deze kaart brengt geen punten aan.');
+    } else {
+      score += v * 1.5 * (1 - pLose) - v * 1.5 * pLose;
+      if (v > 0) reasons.push(`Je maat ligt voor, maar een tegenstander kan er nog over (kans ${pct(pLose)}). Punten bijleggen is een gok.`);
+      else reasons.push('Je maat ligt voor, maar de slag is nog niet zeker: leg een kaart zonder punten.');
+    }
+    if (master && s !== led) {
+      score -= 3;
+      reasons.push(`Dit is je hoogste ${SUIT_NAME[s]} (meester): hou die voor een eigen slag.`);
+    } else if (master && s === led && v > 0 && suitOf(winning.card) === trump && led !== trump) {
+      score -= 1;
+      reasons.push('Deze meester kan later zelf nog een slag winnen.');
+    }
+    if (!master && v > 0 && ctx.higherOut(c).length && s !== led) {
+      score += 0.8;
+      reasons.push(`${listNames(ctx.higherOut(c))} zit nog buiten: deze punten zou je later toch kwijtspelen.`);
+    }
+    score += voidBonus(ctx, c, reasons);
+    return { score, reasons };
+  }
+
+  if (partnerWinning && wins) {
+    const pLosePartner = ctx.pBeatenBy(winning.card, led, laterOpps);
+    const pLoseMine = ctx.pBeatenBy(c, led, laterOpps);
+    if (pLosePartner > 0.3 && pLoseMine < 0.1) {
+      score += 3 + trickPts * 0.3 + v * 0.5;
+      reasons.push(`Je neemt over van je maat met een zekere kaart: zo is de slag (${trickPts + v} punten) veilig. Anders kan een tegenstander er nog over (kans ${pct(pLosePartner)}).`);
+    } else {
+      score -= 2 + v * 0.5;
+      reasons.push('Je maat wint de slag al: overnemen is overbodig.');
+      if (master) {
+        score -= 2;
+        reasons.push('Je zou een meester verspillen.');
+      }
+    }
+    return { score, reasons };
+  }
+
+  // De tegenpartij ligt voor.
+  if (wins) {
+    const p = ctx.pBeatenBy(c, led, laterOpps);
+    const gain = trickPts + v;
+    const cost = resourceCost(ctx, c);
+    if (p < 0.05) {
+      score += gain + 2 - cost;
+      reasons.push(`Wint de slag (${gain} punten) en niemand kan er nog over.`);
+    } else {
+      score += (1 - p) * (gain + 2) - p * (v + 2) - cost;
+      reasons.push(`Wint voorlopig (${gain} punten), maar een tegenstander kan er nog over (kans ${pct(p)}).`);
+    }
+    if (trump && s === trump && led !== trump) reasons.push(master ? 'Je troeft met je hoogste troef.' : 'Je troeft.');
+    if (cost >= 3) reasons.push('Je gebruikt wel je hoogste troef: die is straks weg.');
+    const cheaperWinners = legal.filter((o) => o !== c && beats(o, winning.card, led, trump) && ctx.pBeatenBy(o, led, laterOpps) < 0.05 && orderOf(o) < orderOf(c) && suitOf(o) === s);
+    score -= orderOf(c) * 0.15;
+    if (cheaperWinners.length) {
+      score -= 1;
+      reasons.push(`${listNames(cheaperWinners)} wint ook al: hou de hogere kaart voor later.`);
+    } else if (p < 0.05 && legal.some((o) => o !== c && beats(o, winning.card, led, trump))) {
+      reasons.push('Goedkoopste kaart die de slag zeker wint.');
+    }
+    if (partnerLater && p >= 0.05) reasons.push('Je maat komt nog na jou.');
+    return { score, reasons };
+  }
+
+  // Ik kan de slag niet winnen.
+  const pPartner = partnerLater ? ctx.pBeatenBy(winning.card, led, [ctx.partner]) : 0;
+  if (pPartner > 0.4) {
+    score += v * pPartner * 1.2 - v * (1 - pPartner);
+    reasons.push(`Je maat komt nog en kan de slag pakken (kans ${pct(pPartner)}).`);
+    if (v > 0) reasons.push('Dan zijn deze punten voor jullie.');
+  } else {
+    score -= v * 1.5;
+    if (v > 0) reasons.push(`Je kan de slag niet winnen: geef geen ${v} punt${v > 1 ? 'en' : ''} mee aan de tegenpartij.`);
+    else reasons.push('Je kan de slag niet winnen: leg een kaart zonder punten.');
+  }
+  if (master) {
+    score -= 3;
+    reasons.push(`Bewaar deze meester (hoogste ${SUIT_NAME[s]}) voor een latere slag.`);
+  }
+  score += voidBonus(ctx, c, reasons);
+  if (trump && s === trump) {
+    score -= 1;
+    reasons.push('Je gooit een troef weg zonder de slag te winnen.');
+  }
+  return { score, reasons };
+}
+
+// Beoordeelt elke toegelaten kaart. Gesorteerd van beste naar slechtste.
+function evaluateMoves(deal, player) {
+  const { cards: legal, rule } = legalMovesExplained(deal, player);
+  const ctx = buildContext(deal, player);
+  const empty = deal.trick.length === 0;
+  const evals = legal.map((c) => {
+    const r = empty ? evalLead(ctx, c) : evalFollow(ctx, deal, player, c, legal);
+    return { card: c, score: r.score, reasons: r.reasons };
+  });
+  evals.sort((a, b) => b.score - a.score);
+  if (legal.length === 1) evals[0].reasons.unshift('Enige toegelaten kaart.');
+  return { evals, rule, legal };
+}
+
+function bestMove(deal, player) {
+  return evaluateMoves(deal, player).evals[0].card;
+}
+
+// ---------- Simulaties (determinisatie) ----------
+
+// Verdeelt de onbekende kaarten willekeurig over de andere spelers, in lijn met wat zij al toonden.
+function determinize(deal, player, rng) {
+  const ctx = buildContext(deal, player);
+  const others = [0, 1, 2, 3].filter((p) => p !== player);
+  const sizes = Object.fromEntries(others.map((p) => [p, deal.hands[p].length]));
+  const consistent = (assign) => others.every((p) => assign[p].every((c) => ctx.couldHold(p, c)));
+  let assign = null;
+  for (let attempt = 0; attempt < 60; attempt++) {
+    const cards = shuffle(ctx.unseen, rng);
+    let i = 0;
+    const a = {};
+    for (const p of others) {
+      a[p] = cards.slice(i, i + sizes[p]);
+      i += sizes[p];
+    }
+    if (consistent(a)) {
+      assign = a;
+      break;
+    }
+    if (!assign) assign = a; // noodoplossing als niets past
+  }
+  // Probeer stapsgewijs: kaarten die maar bij één speler kunnen, eerst.
+  if (!consistent(assign)) {
+    const a = Object.fromEntries(others.map((p) => [p, []]));
+    const cards = shuffle(ctx.unseen, rng).sort((x, y) => others.filter((p) => ctx.couldHold(p, x)).length - others.filter((p) => ctx.couldHold(p, y)).length);
+    let ok = true;
+    for (const c of cards) {
+      const opts = others.filter((p) => a[p].length < sizes[p] && ctx.couldHold(p, c));
+      if (!opts.length) {
+        ok = false;
+        break;
+      }
+      a[opts[Math.floor(rng() * opts.length)]].push(c);
+    }
+    if (ok) assign = a;
+  }
+  const d = cloneDeal(deal);
+  for (const p of others) d.hands[p] = assign[p];
+  return d;
+}
+
+function playOut(d) {
+  while (d.phase === 'play') {
+    const p = d.turn;
+    playCard(d, p, bestMove(d, p));
+  }
+  return d.points;
+}
+
+// Speelt elke kandidaat n keer uit tegen willekeurige verdelingen van de onbekende kaarten.
+// Geeft per kaart de gemiddelde eindscore van jouw ploeg in deze deal.
+function simulateMoves(deal, player, candidates, n, seed = 12345) {
+  const rng = makeRng(seed);
+  const totals = Object.fromEntries(candidates.map((c) => [c, 0]));
+  for (let i = 0; i < n; i++) {
+    const world = determinize(deal, player, rng);
+    for (const c of candidates) {
+      const d = cloneDeal(world);
+      playCard(d, player, c);
+      const pts = playOut(d);
+      totals[c] += pts[teamOf(player)];
+    }
+  }
+  return Object.fromEntries(candidates.map((c) => [c, totals[c] / n]));
+}
+
+// Volledig advies voor de speler aan zet.
+function advise(deal, player, { simulations = 100, seed } = {}) {
+  const { evals, rule, legal } = evaluateMoves(deal, player);
+  const result = { rule, evals, forced: legal.length === 1, simulations: 0, notes: [] };
+  if (legal.length > 1 && simulations > 0) {
+    const exp = simulateMoves(deal, player, legal, simulations, seed ?? deal.played.length * 7919 + 17);
+    for (const e of evals) e.expected = exp[e.card];
+    const heuristicBest = evals[0].card;
+    evals.sort((a, b) => (b.expected + b.score * 0.25) - (a.expected + a.score * 0.25));
+    result.simulations = simulations;
+    if (evals[0].card !== heuristicBest) {
+      const h = evals.find((e) => e.card === heuristicBest);
+      result.notes.push(`De vuistregels wijzen naar ${cardName(heuristicBest)}, maar in ${simulations} uitgespeelde verdelingen levert ${cardName(evals[0].card)} gemiddeld ${(evals[0].expected - h.expected).toFixed(1)} punten meer op.`);
+    }
+  }
+  result.best = evals[0];
+  return result;
+}
+
+// ---------- Troef kiezen ----------
+
+const TRUMP_BONUS = { T: 3.5, A: 2.5, K: 1.2, Q: 0.7, J: 0.4, 9: 0.2, 8: 0.2, 7: 0.2 };
+
+function trumpOptions(hand) {
+  const options = [];
+  for (const s of SUITS) {
+    const cards = hand.filter((c) => suitOf(c) === s).sort((a, b) => orderOf(b) - orderOf(a));
+    const n = cards.length;
+    const strength = n * 1.6 + cards.reduce((t, c) => t + TRUMP_BONUS[c[0]], 0);
+    const reasons = [];
+    const hasT = cards.some((c) => c[0] === 'T');
+    const hasA = cards.some((c) => c[0] === 'A');
+    if (n === 0) reasons.push('Je hebt deze kleur niet: de tegenpartij zou alle troeven hebben.');
+    else {
+      reasons.push(`${n} kaart${n > 1 ? 'en' : ''}: ${listNames(cards)}.`);
+      if (hasT && hasA) reasons.push('Manille én aas: jij hebt de twee hoogste troeven en kan troef trekken.');
+      else if (hasT) reasons.push('Je hebt de manille, de hoogste troef.');
+      else if (hasA) reasons.push('De aas is je hoogste troef, maar de manille zit bij een ander.');
+      else reasons.push('Zonder manille of aas verlies je het troefgevecht wellicht.');
+      if (n >= 4) reasons.push('Vier of meer troeven: je houdt de controle over het spel.');
+      else if (n <= 2) reasons.push('Weinig troeven: riskant, tenzij je maat er veel heeft.');
+    }
+    options.push({ trump: s, label: SUIT_NAME[s], strength, reasons });
+  }
+  const tens = hand.filter((c) => c[0] === 'T');
+  const aces = hand.filter((c) => c[0] === 'A' && !tens.some((t) => suitOf(t) === suitOf(c)));
+  const masters = tens.length + aces.length;
+  const shortSuits = SUITS.filter((s) => hand.filter((c) => suitOf(c) === s).length <= 1).length;
+  const sansStrength = masters * 2.6 + tens.length * 0.8 - shortSuits * 1.2 + 1;
+  const sansReasons = [];
+  sansReasons.push(`Zonder troef telt de score dubbel. Je hebt ${masters} zekere meester${masters !== 1 ? 's' : ''}: ${listNames([...tens, ...aces]) || 'geen'}.`);
+  if (masters >= 3) sansReasons.push('Veel hoge kaarten verspreid over de kleuren: sterk zonder troef.');
+  else sansReasons.push('Te weinig hoge kaarten om zonder troef te spelen.');
+  if (shortSuits >= 2) sansReasons.push('Korte kleuren zijn zonder troef geen voordeel: je kan niet troeven.');
+  options.push({ trump: 'sans', label: 'zonder troef (sans)', strength: sansStrength, reasons: sansReasons });
+  options.sort((a, b) => b.strength - a.strength);
+  return options;
+}
+
+function chooseTrump(hand) {
+  return trumpOptions(hand)[0].trump;
+}
+
+// Advies bij het kiezen van troef, met simulatie per optie.
+function adviseTrump(deal, player, { simulations = 40, seed = 777 } = {}) {
+  const options = trumpOptions(deal.hands[player]);
+  if (simulations > 0) {
+    const rng = makeRng(seed);
+    const totals = Object.fromEntries(options.map((o) => [o.trump, 0]));
+    for (let i = 0; i < simulations; i++) {
+      const world = determinize(deal, player, rng);
+      for (const o of options) {
+        const d = cloneDeal(world);
+        setTrump(d, o.trump);
+        const pts = playOut(d);
+        totals[o.trump] += pts[teamOf(player)];
+      }
+    }
+    for (const o of options) {
+      o.expected = totals[o.trump] / simulations;
+      o.expectedScore = (o.expected - 30) * (o.trump === 'sans' ? 2 : 1);
+    }
+    options.sort((a, b) => b.expectedScore + b.strength * 0.3 - (a.expectedScore + a.strength * 0.3));
+  }
+  return { options, best: options[0], simulations };
+}
+
+// Interface: tafel, hand, adviespaneel. Alle spellogica zit in engine.js en advisor.js.
+
+
+const SPEEDS = { snel: 350, normaal: 750, traag: 1300 };
+const SEAT = ['south', 'west', 'north', 'east'];
+const RED = { h: true, d: true };
+
+const store = {
+  get(k, dflt) { try { const v = localStorage.getItem(k); return v ? { ...dflt, ...JSON.parse(v) } : dflt; } catch { return dflt; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* geen opslag beschikbaar */ } },
+};
+
+const S = {
+  settings: store.get('manillen.settings', { mode: 'vooraf', sims: 100, speed: 'normaal' }),
+  stats: store.get('manillen.stats', { total: 0, followed: 0, deals: 0 }),
+  game: null, deal: null, advice: null, trumpAdvice: null, feedback: null, lastTrick: null, computing: false, timer: null, log: [],
+};
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+const mini = (c) => `<span class="mini ${RED[suitOf(c)] ? 'red' : ''}">${cardName(c)}</span>`;
+const cardHtml = (c, cls = '', attrs = '') => `<div class="card ${RED[suitOf(c)] ? 'red' : ''} ${cls}" data-card="${c}" ${attrs}><span class="r">${RANK_LABEL[rankOf(c)]}${valueOf(c) ? `<small>${valueOf(c)} pt</small>` : ''}</span><span class="s">${SUIT_SYMBOL[suitOf(c)]}</span></div>`;
+const trumpLabel = (t) => (t === 'sans' ? 'zonder troef' : t ? `${SUIT_SYMBOL[t]} ${SUIT_NAME[t]}` : 'nog te kiezen');
+const delay = () => SPEEDS[S.settings.speed] ?? 750;
+
+function schedule(fn, ms) {
+  clearTimeout(S.timer);
+  S.timer = setTimeout(fn, ms);
+}
+
+function toast(msg) {
+  document.querySelectorAll('.toast').forEach((t) => t.remove());
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2600);
+}
+
+// ---------- Spelverloop ----------
+
+function newGame() {
+  S.game = createGame({ firstDealer: 0 });
+  S.log = [];
+  newDeal();
+}
+
+function newDeal() {
+  S.deal = startDeal(S.game);
+  S.advice = null; S.trumpAdvice = null; S.feedback = null; S.lastTrick = null;
+  render();
+  step();
+}
+
+function step() {
+  const d = S.deal;
+  if (d.phase === 'trump') {
+    if (d.chooser === 0) {
+      computeTrumpAdvice();
+      return;
+    }
+    schedule(() => {
+      setTrump(d, chooseTrump(d.hands[d.chooser]));
+      render();
+      step();
+    }, delay());
+    return;
+  }
+  if (d.phase === 'play') {
+    if (d.turn === 0) {
+      computeAdvice();
+      return;
+    }
+    schedule(() => {
+      const p = d.turn;
+      const r = playCard(d, p, bestMove(d, p));
+      afterPlay(r);
+    }, delay());
+    return;
+  }
+  render();
+}
+
+function afterPlay(r) {
+  if (r.trickComplete) {
+    S.lastTrick = S.deal.tricks[S.deal.tricks.length - 1];
+    render();
+    schedule(() => {
+      S.lastTrick = null;
+      if (S.deal.phase === 'done') {
+        finishDeal(S.game);
+        S.stats.deals += 1;
+        store.set('manillen.stats', S.stats);
+      }
+      render();
+      step();
+    }, delay() * 2.2);
+  } else {
+    render();
+    step();
+  }
+}
+
+function computeAdvice() {
+  S.computing = true;
+  render();
+  setTimeout(() => {
+    S.advice = advise(S.deal, 0, { simulations: Number(S.settings.sims) });
+    S.computing = false;
+    render();
+  }, 20);
+}
+
+function computeTrumpAdvice() {
+  S.computing = true;
+  render();
+  setTimeout(() => {
+    S.trumpAdvice = adviseTrump(S.deal, 0, { simulations: Number(S.settings.sims) > 0 ? 40 : 0 });
+    S.computing = false;
+    render();
+  }, 20);
+}
+
+function userPlay(card) {
+  const d = S.deal;
+  if (d.phase !== 'play' || d.turn !== 0 || S.computing) return;
+  if (!isLegal(d, 0, card)) {
+    toast(legalMovesExplained(d, 0).rule);
+    return;
+  }
+  const adv = S.advice;
+  if (adv && !adv.forced) {
+    S.stats.total += 1;
+    if (adv.best.card === card) S.stats.followed += 1;
+    store.set('manillen.stats', S.stats);
+    S.feedback = S.settings.mode === 'geen' ? null : { card, advice: adv, trickNo: d.tricks.length + 1 };
+  } else {
+    S.feedback = null;
+  }
+  S.advice = null;
+  const r = playCard(d, 0, card);
+  afterPlay(r);
+}
+
+function userTrump(t) {
+  const d = S.deal;
+  if (d.phase !== 'trump' || d.chooser !== 0) return;
+  const adv = S.trumpAdvice;
+  if (adv) {
+    S.stats.total += 1;
+    if (adv.best.trump === t) S.stats.followed += 1;
+    store.set('manillen.stats', S.stats);
+    S.feedback = S.settings.mode === 'geen' ? null : { trump: t, advice: adv };
+  }
+  setTrump(d, t);
+  S.trumpAdvice = null;
+  render();
+  step();
+}
+
+// ---------- Weergave ----------
+
+function render() {
+  renderScore();
+  renderTable();
+  renderHand();
+  renderPanel();
+}
+
+function renderScore() {
+  const g = S.game, d = S.deal;
+  const chips = [
+    `<div class="score"><span class="who">Wij</span><span class="n">${g.scores[0]}</span></div>`,
+    `<div class="score"><span class="who">Zij</span><span class="n">${g.scores[1]}</span></div>`,
+    `<span class="chip">Deal ${d.no}</span>`,
+    `<span class="chip">Deler: ${PLAYER_NAME[d.dealer]}</span>`,
+    `<span class="chip ${RED[d.trump] ? 'red' : ''} ${d.trump ? 'accent' : ''}">Troef: ${trumpLabel(d.trump)}</span>`,
+    d.phase !== 'trump' ? `<span class="chip">Deze deal: wij ${d.points[0]} · zij ${d.points[1]}</span>` : '',
+  ];
+  $('scoreboard').innerHTML = chips.join('');
+}
+
+// Wat weet iedereen aan tafel over speler p? Enkel tonen als het nog iets zegt.
+function knowledge(p) {
+  const d = S.deal;
+  const trump = trumpSuitOf(d);
+  const played = new Set(d.played);
+  const out = [];
+  for (const s of SUITS) {
+    const stillOut = RANKS.filter((r) => !played.has(r + s) && !d.hands[0].includes(r + s));
+    if (!stillOut.length) continue;
+    if (d.voids[p][s]) out.push(`geen ${SUIT_SYMBOL[s]}${s === trump ? ' (troef)' : ''}`);
+    else if (d.maxRank[p][s] != null && stillOut.some((r) => orderOf(r + s) > d.maxRank[p][s])) out.push(`geen ${SUIT_SYMBOL[s]} boven ${RANK_LABEL[RANKS[d.maxRank[p][s]]]}`);
+  }
+  return out;
+}
+
+function renderTable() {
+  const d = S.deal;
+  const seats = [0, 1, 2, 3].map((p) => {
+    const tags = [];
+    if (d.dealer === p) tags.push('<span class="tag">deler</span>');
+    if (d.trump && d.chooser === p) tags.push('<span class="tag">koos troef</span>');
+    if (d.phase !== 'done' && d.turn === p && !S.lastTrick) tags.push('<span class="tag turn">aan zet</span>');
+    const backs = p === 0 ? '' : `<div class="backs">${'<span class="back"></span>'.repeat(d.hands[p].length)}</div>`;
+    const know = p === 0 ? '' : `<div class="know">${knowledge(p).join(' · ') || '&nbsp;'}</div>`;
+    return `<div class="seat ${SEAT[p]} ${d.turn === p && d.phase === 'play' && !S.lastTrick ? 'active' : ''}"><div class="name">${PLAYER_LABEL[p]}</div><div class="tags">${tags.join('')}</div>${backs}${know}</div>`;
+  });
+  let center = '';
+  if (d.phase === 'trump') {
+    if (d.chooser === 0) {
+      const adv = S.trumpAdvice;
+      const opts = ['h', 'c', 'd', 's', 'sans'].map((t) => {
+        const o = adv?.options.find((x) => x.trump === t);
+        const exp = o?.expectedScore != null ? `<span class="exp">${o.expectedScore >= 0 ? '+' : ''}${o.expectedScore.toFixed(1)}</span>` : '';
+        const sym = t === 'sans' ? '<span class="sym">∅</span>' : `<span class="sym ${RED[t] ? 'red' : ''}">${SUIT_SYMBOL[t]}</span>`;
+        return `<button class="trump-btn ${adv?.best.trump === t && S.settings.mode === 'vooraf' ? 'best' : ''}" data-trump="${t}">${sym}<span>${t === 'sans' ? 'sans' : SUIT_NAME[t]}</span>${exp}</button>`;
+      });
+      center = `<div class="trump-pick"><div class="title">Jij deelt: kies troef</div><div class="options">${opts.join('')}</div>${S.computing ? '<div class="notice">Even rekenen…</div>' : ''}</div>`;
+    } else {
+      center = `<div class="notice"><strong>${PLAYER_NAME[d.chooser]}</strong> deelt en kiest troef…</div>`;
+    }
+  } else if (d.phase === 'done' && !S.lastTrick) {
+    const r = d.result;
+    const ours = r.winnerTeam === 0;
+    const title = r.winnerTeam == null ? 'Gelijk: 30 tegen 30' : ours ? `Gewonnen: +${r.score}` : `Verloren: ${r.score} voor hen`;
+    center = `<div class="result"><h2>${title}</h2><div class="pts">Wij ${r.points[0]} · zij ${r.points[1]} punten${r.multiplier > 1 ? ' · dubbel (sans)' : ''}</div><button class="btn primary" id="next-deal">${gameOver(S.game) ? 'Nieuw spel' : 'Volgende deal'}</button></div>`;
+  } else {
+    const trick = S.lastTrick ? S.lastTrick.cards : d.trick;
+    const winner = S.lastTrick ? S.lastTrick.winner : null;
+    const slots = trick.map((t) => `<div class="slot p${t.player} ${t.player === winner ? 'winner' : ''}">${cardHtml(t.card)}<span class="who">${PLAYER_NAME[t.player]}</span></div>`);
+    const res = S.lastTrick ? `<div class="trick-result">${PLAYER_NAME[winner]} pakt de slag: ${S.lastTrick.points} punt${S.lastTrick.points === 1 ? '' : 'en'}</div>` : '';
+    const empty = !trick.length && d.turn !== 0 ? `<div class="notice">${PLAYER_NAME[d.turn]} komt uit…</div>` : '';
+    center = `<div class="trick">${slots.join('')}</div>${res}${empty}`;
+  }
+  $('table').innerHTML = seats.join('') + `<div class="center">${center}</div>`;
+}
+
+function renderHand() {
+  const d = S.deal;
+  const myTurn = d.phase === 'play' && d.turn === 0 && !S.lastTrick && !S.computing;
+  const legal = myTurn ? new Set(legalMovesExplained(d, 0).cards) : null;
+  const advised = myTurn && S.settings.mode === 'vooraf' && S.advice && !S.advice.forced ? S.advice.best.card : null;
+  $('hand').innerHTML = d.hands[0].map((c) => {
+    const cls = myTurn ? (legal.has(c) ? 'legal' : 'illegal') : 'waiting';
+    return cardHtml(c, `${cls} ${advised === c ? 'advised' : ''}`, 'tabindex="0" role="button"');
+  }).join('');
+  let hint = '';
+  if (d.phase === 'trump') hint = d.chooser === 0 ? 'Bekijk je kaarten en kies troef op de tafel.' : 'Wachten op de troefkeuze.';
+  else if (S.computing) hint = 'Even rekenen…';
+  else if (myTurn) hint = S.advice?.forced ? 'Je hebt maar één toegelaten kaart.' : 'Klik op een kaart om ze te spelen.';
+  else if (d.phase === 'play') hint = 'De anderen spelen…';
+  $('hand-hint').textContent = hint;
+}
+
+function reasonsHtml(reasons) {
+  return `<ul class="reasons">${reasons.map((r) => `<li>${esc(r)}</li>`).join('')}</ul>`;
+}
+
+function optionsTable(evals, bestCard) {
+  const rows = evals.map((e) => `<tr class="${e.card === bestCard ? 'best' : ''}"><td class="mini ${RED[suitOf(e.card)] ? 'red' : ''}">${cardName(e.card)}</td><td class="exp">${e.expected != null ? `${e.expected.toFixed(1)} pt` : ''}</td><td>${esc(e.reasons[0] || '')}</td></tr>`);
+  return `<table class="options"><tbody>${rows.join('')}</tbody></table>`;
+}
+
+function renderPanel() {
+  const d = S.deal;
+  const blocks = [];
+  const mode = S.settings.mode;
+
+  // 1. Advies of status
+  if (d.phase === 'trump' && d.chooser === 0) {
+    const adv = S.trumpAdvice;
+    if (S.computing || !adv) blocks.push('<div class="block"><h2>Troef kiezen</h2><p>Even rekenen…</p></div>');
+    else if (mode === 'vooraf') {
+      const b = adv.best;
+      blocks.push(`<div class="block"><h2>Advies: ${b.trump === 'sans' ? 'zonder troef' : `${SUIT_SYMBOL[b.trump]} ${b.label}`}</h2>${reasonsHtml(b.reasons)}${adv.simulations ? `<p class="stats">In ${adv.simulations} uitgespeelde verdelingen: gemiddeld ${b.expected.toFixed(1)} punten voor jullie.</p>` : ''}<h3>Alle opties</h3><table class="options"><tbody>${adv.options.map((o) => `<tr class="${o === b ? 'best' : ''}"><td class="mini ${RED[o.trump] ? 'red' : ''}">${o.trump === 'sans' ? 'sans' : SUIT_SYMBOL[o.trump] + ' ' + o.label}</td><td class="exp">${o.expectedScore != null ? `${o.expectedScore >= 0 ? '+' : ''}${o.expectedScore.toFixed(1)}` : ''}</td><td>${esc(o.reasons[1] || o.reasons[0])}</td></tr>`).join('')}</tbody></table><div class="actions"><button class="btn primary" data-trump="${b.trump}">Kies ${b.trump === 'sans' ? 'sans' : b.label}</button></div></div>`);
+    } else {
+      blocks.push(`<div class="block"><h2>Troef kiezen</h2><p>${mode === 'achteraf' ? 'Kies zelf. Daarna vergelijk ik met het advies.' : 'Kies zelf een troef.'}</p><p class="stats">Vuistregel: je langste kleur, liefst met manille of aas.</p></div>`);
+    }
+  } else if (d.phase === 'play' && d.turn === 0 && !S.lastTrick) {
+    const adv = S.advice;
+    const rule = legalMovesExplained(d, 0).rule;
+    if (S.computing || !adv) blocks.push(`<div class="block"><h2>Jij bent aan zet</h2><div class="rule">${esc(rule)}</div><p>Even rekenen…</p></div>`);
+    else if (adv.forced) {
+      blocks.push(`<div class="block"><h2>Verplichte kaart</h2><div class="rule">${esc(rule)}</div><div class="advice">${cardHtml(adv.best.card)}<div class="why">${reasonsHtml(adv.best.reasons.slice(1))}</div></div><div class="actions"><button class="btn primary" data-play="${adv.best.card}">Speel ${cardName(adv.best.card)}</button></div></div>`);
+    } else if (mode === 'vooraf') {
+      const b = adv.best;
+      blocks.push(`<div class="block"><h2>Advies: speel ${cardName(b.card)}</h2><div class="rule">${esc(rule)}</div><div class="advice">${cardHtml(b.card)}<div class="why"><p><strong>${esc(cardLongName(b.card))}</strong>${b.expected != null ? ` · verwacht ${b.expected.toFixed(1)} pt voor jullie` : ''}</p>${reasonsHtml(b.reasons)}</div></div>${adv.notes.map((n) => `<div class="note">${esc(n)}</div>`).join('')}<div class="actions"><button class="btn primary" data-play="${b.card}">Speel ${cardName(b.card)}</button></div><h3>Alle toegelaten kaarten</h3>${optionsTable(adv.evals, b.card)}${adv.simulations ? `<p class="stats">Verwachte punten: gemiddelde eindscore van jullie ploeg over ${adv.simulations} uitgespeelde verdelingen van de onbekende kaarten.</p>` : ''}</div>`);
+    } else {
+      blocks.push(`<div class="block"><h2>Jij bent aan zet</h2><div class="rule">${esc(rule)}</div><p>${mode === 'achteraf' ? 'Speel zelf een kaart. Daarna zie je wat de coach zou doen en waarom.' : 'Speel zelf. De coach zwijgt, maar telt wel mee hoe vaak je zijn keuze maakt.'}</p></div>`);
+    }
+  } else if (d.phase === 'play' || S.lastTrick) {
+    blocks.push(`<div class="block"><h2>${S.lastTrick ? `${PLAYER_NAME[S.lastTrick.winner]} pakt de slag` : `${PLAYER_NAME[d.turn]} is aan zet`}</h2><p class="stats">Slag ${Math.min(d.tricks.length + (S.lastTrick ? 0 : 1), 8)} van 8</p></div>`);
+  } else if (d.phase === 'done') {
+    blocks.push(`<div class="block"><h2>Deal ${d.no} is gespeeld</h2><p>Troef was ${trumpLabel(d.trump)}, gekozen door ${PLAYER_NAME[d.chooser]}.</p></div>`);
+  }
+
+  // 2. Feedback op je laatste keuze
+  const f = S.feedback;
+  if (f && mode !== 'geen') {
+    if (f.trump) {
+      const adv = f.advice, chosen = adv.options.find((o) => o.trump === f.trump), best = adv.best;
+      const good = f.trump === best.trump;
+      blocks.push(`<div class="block feedback ${good ? 'good' : 'bad'}"><h2>${good ? 'Goede troefkeuze' : `Coach koos ${best.trump === 'sans' ? 'sans' : best.label}`}</h2><p>Jij koos ${chosen.trump === 'sans' ? 'zonder troef' : chosen.label}.</p>${reasonsHtml(good ? best.reasons : [...best.reasons.slice(0, 2), `Jouw keuze: ${chosen.reasons[1] || chosen.reasons[0]}`])}</div>`);
+    } else {
+      const adv = f.advice, best = adv.best, good = f.card === best.card;
+      const mine = adv.evals.find((e) => e.card === f.card);
+      const diff = mine?.expected != null && best.expected != null ? best.expected - mine.expected : null;
+      blocks.push(`<div class="block feedback ${good ? 'good' : diff != null && diff < 1 ? 'good' : 'bad'}"><h2>${good ? `Goed gespeeld: ${cardName(f.card)}` : `Je speelde ${cardName(f.card)}, coach zegt ${cardName(best.card)}`}</h2>${good ? reasonsHtml(best.reasons) : `<p><strong>Waarom ${cardName(best.card)}:</strong></p>${reasonsHtml(best.reasons)}<p><strong>Over jouw ${cardName(f.card)}:</strong></p>${reasonsHtml(mine?.reasons || [])}${diff != null ? `<p class="stats">Verschil in verwachte punten: ${diff.toFixed(1)}${diff < 1 ? ' (bijna even goed)' : ''}.</p>` : ''}`}</div>`);
+    }
+  }
+
+  // 3. Instellingen en statistiek
+  const pctFollowed = S.stats.total ? Math.round((100 * S.stats.followed) / S.stats.total) : 0;
+  blocks.push(`<div class="block"><h2>Coach</h2><div class="settings">
+    <div class="row"><span class="label">Advies</span>
+      <label><input type="radio" name="mode" value="vooraf" ${mode === 'vooraf' ? 'checked' : ''}> vooraf</label>
+      <label><input type="radio" name="mode" value="achteraf" ${mode === 'achteraf' ? 'checked' : ''}> na mijn keuze</label>
+      <label><input type="radio" name="mode" value="geen" ${mode === 'geen' ? 'checked' : ''}> geen</label></div>
+    <div class="row"><label for="sims">Simulaties</label><select id="sims"><option value="0" ${S.settings.sims == 0 ? 'selected' : ''}>uit (enkel vuistregels)</option><option value="50" ${S.settings.sims == 50 ? 'selected' : ''}>50</option><option value="100" ${S.settings.sims == 100 ? 'selected' : ''}>100</option><option value="300" ${S.settings.sims == 300 ? 'selected' : ''}>300 (trager)</option></select>
+      <label for="speed">Tempo</label><select id="speed"><option value="snel" ${S.settings.speed === 'snel' ? 'selected' : ''}>snel</option><option value="normaal" ${S.settings.speed === 'normaal' ? 'selected' : ''}>normaal</option><option value="traag" ${S.settings.speed === 'traag' ? 'selected' : ''}>traag</option></select></div>
+    <div class="stats">Je volgde het advies ${S.stats.followed} van ${S.stats.total} keer (${pctFollowed}%) · ${S.stats.deals} deals gespeeld. <button class="btn" id="reset-stats" style="padding:2px 8px;font-size:.8rem">wis</button></div>
+    <div class="actions"><button class="btn" id="new-game">Nieuw spel</button></div>
+  </div></div>`);
+
+  // 4. Kaarten in het spel
+  const trump = trumpSuitOf(d);
+  const played = new Set(d.played);
+  const mine = new Set(d.hands[0]);
+  const rows = ['h', 'c', 'd', 's'].map((s) => {
+    const ranks = [...RANKS].reverse();
+    const masterRank = ranks.find((r) => !played.has(r + s));
+    const cells = ranks.map((r) => {
+      const c = r + s;
+      const cls = played.has(c) ? 'played' : mine.has(c) ? 'mine' : 'out';
+      return `<span class="cell ${cls} ${r === masterRank && !played.has(c) ? 'master' : ''}" title="${esc(cardLongName(c))}">${RANK_LABEL[r]}</span>`;
+    });
+    return `<div class="suit-row"><span class="sym ${RED[s] ? 'red' : ''}">${SUIT_SYMBOL[s]}${s === trump ? '<small>*</small>' : ''}</span><div class="cells">${cells.join('')}</div></div>`;
+  });
+  const know = [1, 2, 3].map((p) => {
+    const k = knowledge(p);
+    return k.length ? `<li>${PLAYER_NAME[p]}: ${k.join(', ')}</li>` : '';
+  }).join('');
+  const trumpsOut = trump ? RANKS.filter((r) => !played.has(r + trump) && !mine.has(r + trump)).length : null;
+  blocks.push(`<div class="block"><h2>Kaarten in het spel</h2><div class="tracker">${rows.join('')}<div class="legend">Geel: in jouw hand · doorstreept: al gespeeld · M: hoogste kaart die nog meedoet${trump ? ` · * troef: nog ${trumpsOut} bij de anderen` : ''}</div></div>${know ? `<ul class="knowledge">${know}</ul>` : ''}</div>`);
+
+  // 5. Slagen
+  if (d.tricks.length) {
+    const items = d.tricks.map((t, i) => `<li><span class="n">${i + 1}.</span>${t.cards.map((x) => `<span>${PLAYER_NAME[x.player][0]} ${mini(x.card)}</span>`).join('')}<span class="win">${PLAYER_NAME[t.winner]} +${t.points}</span></li>`);
+    blocks.push(`<div class="block"><h2>Slagen</h2><ul class="log">${items.join('')}</ul></div>`);
+  }
+
+  $('panel').innerHTML = blocks.join('');
+}
+
+// ---------- Gebeurtenissen ----------
+
+document.addEventListener('click', (e) => {
+  const t = e.target.closest('[data-card], [data-play], [data-trump], #next-deal, #new-game, #reset-stats');
+  if (!t) return;
+  if (t.id === 'next-deal') {
+    if (gameOver(S.game)) newGame(); else newDeal();
+    return;
+  }
+  if (t.id === 'new-game') { newGame(); return; }
+  if (t.id === 'reset-stats') { S.stats = { total: 0, followed: 0, deals: 0 }; store.set('manillen.stats', S.stats); render(); return; }
+  if (t.dataset.trump) { userTrump(t.dataset.trump); return; }
+  if (t.dataset.play) { userPlay(t.dataset.play); return; }
+  if (t.dataset.card && t.closest('#hand')) userPlay(t.dataset.card);
+});
+document.addEventListener('keydown', (e) => {
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.dataset?.card && e.target.closest('#hand')) {
+    e.preventDefault();
+    userPlay(e.target.dataset.card);
+  }
+});
+document.addEventListener('change', (e) => {
+  const el = e.target;
+  if (el.name === 'mode') S.settings.mode = el.value;
+  else if (el.id === 'sims') S.settings.sims = Number(el.value);
+  else if (el.id === 'speed') S.settings.speed = el.value;
+  else return;
+  store.set('manillen.settings', S.settings);
+  const d = S.deal;
+  if (el.id === 'sims' && d.phase === 'play' && d.turn === 0 && !S.lastTrick) computeAdvice();
+  else if (el.id === 'sims' && d.phase === 'trump' && d.chooser === 0) computeTrumpAdvice();
+  else render();
+});
+
+newGame();
+
+</script>
