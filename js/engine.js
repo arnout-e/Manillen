@@ -5,8 +5,8 @@ export const SUITS = ['h', 's', 'd', 'c'];
 export const SUIT_NAME = { h: 'harten', s: 'schoppen', d: 'ruiten', c: 'klaveren' };
 export const SUIT_SYMBOL = { h: '♥', s: '♠', d: '♦', c: '♣' };
 export const RANKS = ['7', '8', '9', 'J', 'Q', 'K', 'A', 'T']; // van laag naar hoog
-export const RANK_LABEL = { 7: '7', 8: '8', 9: '9', J: 'B', Q: 'V', K: 'H', A: 'A', T: '10' };
-export const RANK_NAME = { 7: 'zeven', 8: 'acht', 9: 'negen', J: 'boer', Q: 'vrouw', K: 'heer', A: 'aas', T: 'manille' };
+export const RANK_LABEL = { 7: '7', 8: '8', 9: '9', J: 'B', Q: 'D', K: 'K', A: 'A', T: '10' };
+export const RANK_NAME = { 7: 'zeven', 8: 'acht', 9: 'negen', J: 'boer', Q: 'dame', K: 'koning', A: 'aas', T: 'manille' };
 export const RANK_ORDER = Object.fromEntries(RANKS.map((r, i) => [r, i]));
 export const RANK_VALUE = { 7: 0, 8: 0, 9: 0, J: 1, Q: 2, K: 3, A: 4, T: 5 };
 export const DECK = SUITS.flatMap((s) => RANKS.map((r) => r + s));

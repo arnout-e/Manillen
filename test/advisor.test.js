@@ -29,7 +29,7 @@ test('advies is altijd een toegelaten kaart en heeft een reden', () => {
   }
 });
 
-test('smeren: leg punten bij als je maat de slag zeker heeft', () => {
+test('vetten: leg punten bij als je maat de slag zeker heeft', () => {
   // Noord (2) speelde de manille harten; Zuid (0) is laatste en heeft geen harten.
   const deal = makeDeal({
     hands: [['Ac', '7d', '8d'], ['7h'], ['9h'], ['8h']],
@@ -39,7 +39,7 @@ test('smeren: leg punten bij als je maat de slag zeker heeft', () => {
   });
   const { evals } = evaluateMoves(deal, 0);
   assert.equal(evals[0].card, 'Ac');
-  assert.match(evals[0].reasons.join(' '), /smeren/);
+  assert.match(evals[0].reasons.join(' '), /vetten/);
 });
 
 test('geen punten weggeven als je niet kan winnen', () => {

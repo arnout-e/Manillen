@@ -217,7 +217,7 @@ function evalFollow(ctx, deal, player, c, legal) {
     const pLose = ctx.pBeatenBy(winning.card, led, laterOpps);
     if (pLose < 0.05) {
       score += v * 1.5 + 1;
-      reasons.push(isLast ? 'Je maat wint de slag: leg punten bij (smeren).' : 'Je maat wint de slag en niemand kan er nog over: leg punten bij (smeren).');
+      reasons.push(isLast ? 'Je maat wint de slag: leg punten bij (vetten).' : 'Je maat wint de slag en niemand kan er nog over: leg punten bij (vetten).');
       if (v === 0) reasons.push('Deze kaart brengt geen punten aan.');
     } else {
       score += v * 1.5 * (1 - pLose) - v * 1.5 * pLose;

@@ -279,13 +279,13 @@ summary { cursor: pointer; font-family: "Fraunces", Georgia, serif; font-weight:
       <summary>Spelregels in het kort</summary>
       <div class="prose">
         <p>Manillen speel je met 32 kaarten (7 tot aas) in twee ploegen van twee. Je maat zit tegenover je: hier is dat Noord. Elke speler krijgt 8 kaarten. De deler kiest troef nadat hij zijn kaarten bekeek, of speelt zonder troef (sans). Dan telt de score dubbel.</p>
-        <p>De rangorde is anders dan bij de meeste spellen: de <strong>10 (manille)</strong> is de hoogste kaart, dan aas, heer, vrouw, boer, 9, 8, 7. Punten: manille 5, aas 4, heer 3, vrouw 2, boer 1. In totaal zitten er 60 punten in het spel. De ploeg met meer dan 30 wint de deal en schrijft het verschil met 30 op. Wie eerst 101 haalt, wint.</p>
+        <p>De rangorde is anders dan bij de meeste spellen: de <strong>10 (manille)</strong> is de hoogste kaart, dan aas, koning, dame, boer, 9, 8, 7. Punten: manille 5, aas 4, koning 3, dame 2, boer 1. In totaal zitten er 60 punten in het spel. De ploeg met meer dan 30 wint de deal en schrijft het verschil met 30 op. Wie eerst 101 haalt, wint.</p>
         <p>De regels aan tafel zijn streng:</p>
         <ul>
           <li>Je moet altijd de gevraagde kleur volgen.</li>
           <li>Kan je volgen, dan moet je hoger leggen dan de kaart die voorligt, als je dat kan. Ligt je maat voor, dan hoeft dat niet.</li>
           <li>Kan je niet volgen en ligt de tegenpartij voor, dan moet je troeven. Is er al getroefd, dan moet je overtroeven als je kan. Kan je niet overtroeven, dan mag je alles bijleggen.</li>
-          <li>Ligt je maat voor, dan mag je bijleggen wat je wil. Punten bijleggen in de slag van je maat heet <em>smeren</em>.</li>
+          <li>Ligt je maat voor, dan mag je bijleggen wat je wil. Punten bijleggen in de slag van je maat heet <em>vetten</em>.</li>
         </ul>
         <p>Er bestaan lokale varianten (wie troef kiest, laatste kaart op tafel, mannen en dubbelen). Dit programma speelt de versie hierboven.</p>
       </div>
@@ -296,7 +296,7 @@ summary { cursor: pointer; font-family: "Fraunces", Georgia, serif; font-weight:
         <ul>
           <li><strong>Meester</strong>: de hoogste kaart van een kleur die nog in het spel is. Daarmee win je zeker, tenzij iemand troeft. Bewaar meesters voor slagen waar ze punten opleveren.</li>
           <li><strong>Troef trekken</strong>: heb je meer troeven dan de anderen samen, kom dan troef uit. Zo raken de tegenstanders hun troeven kwijt en winnen je meesters later zonder gevaar.</li>
-          <li><strong>Smeren</strong>: wint je maat de slag zeker, leg er dan je aas of heer bij. Punten in een gewonnen slag zijn punten voor jullie.</li>
+          <li><strong>Vetten</strong>: wint je maat de slag zeker, leg er dan je aas of koning bij. Punten in een gewonnen slag zijn punten voor jullie.</li>
           <li><strong>Niet weggeven</strong>: kan je een slag niet winnen, leg dan je laagste kaart zonder punten.</li>
           <li><strong>Goedkoop winnen</strong>: winnen twee kaarten de slag zeker, neem dan de laagste en hou de hoogste voor later.</li>
           <li><strong>Kleur kort maken</strong>: speel een kleur waarvan je er weinig hebt uit, zodat je die later kan troeven.</li>
@@ -314,8 +314,8 @@ const SUITS = ['h', 's', 'd', 'c'];
 const SUIT_NAME = { h: 'harten', s: 'schoppen', d: 'ruiten', c: 'klaveren' };
 const SUIT_SYMBOL = { h: '♥', s: '♠', d: '♦', c: '♣' };
 const RANKS = ['7', '8', '9', 'J', 'Q', 'K', 'A', 'T']; // van laag naar hoog
-const RANK_LABEL = { 7: '7', 8: '8', 9: '9', J: 'B', Q: 'V', K: 'H', A: 'A', T: '10' };
-const RANK_NAME = { 7: 'zeven', 8: 'acht', 9: 'negen', J: 'boer', Q: 'vrouw', K: 'heer', A: 'aas', T: 'manille' };
+const RANK_LABEL = { 7: '7', 8: '8', 9: '9', J: 'B', Q: 'D', K: 'K', A: 'A', T: '10' };
+const RANK_NAME = { 7: 'zeven', 8: 'acht', 9: 'negen', J: 'boer', Q: 'dame', K: 'koning', A: 'aas', T: 'manille' };
 const RANK_ORDER = Object.fromEntries(RANKS.map((r, i) => [r, i]));
 const RANK_VALUE = { 7: 0, 8: 0, 9: 0, J: 1, Q: 2, K: 3, A: 4, T: 5 };
 const DECK = SUITS.flatMap((s) => RANKS.map((r) => r + s));
@@ -789,7 +789,7 @@ function evalFollow(ctx, deal, player, c, legal) {
     const pLose = ctx.pBeatenBy(winning.card, led, laterOpps);
     if (pLose < 0.05) {
       score += v * 1.5 + 1;
-      reasons.push(isLast ? 'Je maat wint de slag: leg punten bij (smeren).' : 'Je maat wint de slag en niemand kan er nog over: leg punten bij (smeren).');
+      reasons.push(isLast ? 'Je maat wint de slag: leg punten bij (vetten).' : 'Je maat wint de slag en niemand kan er nog over: leg punten bij (vetten).');
       if (v === 0) reasons.push('Deze kaart brengt geen punten aan.');
     } else {
       score += v * 1.5 * (1 - pLose) - v * 1.5 * pLose;
